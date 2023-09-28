@@ -7,17 +7,17 @@ import (
 	"strings"
 )
 
-func Exec(commandForm request.CommandForm) error {
+func Exec(commandForm request.CommandForm) (output string, err error) {
 	//连接设备
 	targetAddr := commandForm.Ip + ":" + commandForm.Port
-	err := deviceConnect(targetAddr, false)
+	err = deviceConnect(targetAddr, false)
 	if err != nil {
-		return err
+		return
 	}
 
 	//处理命令
 	commandStr := "-s " + targetAddr + " "
-	switch commandForm.Cmd {
+	switch commandForm.Op {
 	case "setProxy":
 		commandStr += "shell settings put global http_proxy " + commandForm.ProxyAddr
 		break
@@ -30,15 +30,17 @@ func Exec(commandForm request.CommandForm) error {
 	case "stop":
 		commandStr += "shell am force-stop " + commandForm.PackageName
 		break
+	default:
+		commandStr += commandForm.Cmd
 	}
 
 	cmd := exec.Command("adb", strings.Split(commandStr, " ")...)
-	output, err := cmd.CombinedOutput()
-	fmt.Println(string(output))
+	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {
-		return err
+		return
 	}
-	return nil
+	output = string(outputBytes)
+	return
 }
 
 func getDevices() (deviceMap map[string]string, err error) {

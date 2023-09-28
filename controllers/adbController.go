@@ -21,14 +21,14 @@ func (c *AdbController) Index(ctx *gin.Context) {
 		})
 		return
 	}
-	if (commandForm.Cmd == "setProxy") && commandForm.ProxyAddr == "" {
+	if (commandForm.Op == "setProxy") && commandForm.ProxyAddr == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":    false,
 			"errMessage": "包名不可为空",
 		})
 		return
 	}
-	if (commandForm.Cmd == "clear" || commandForm.Cmd == "stop") && commandForm.PackageName == "" {
+	if (commandForm.Op == "clear" || commandForm.Op == "stop") && commandForm.PackageName == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":    false,
 			"errMessage": "包名不可为空",
@@ -39,7 +39,7 @@ func (c *AdbController) Index(ctx *gin.Context) {
 		commandForm.Port = "5555"
 	}
 
-	err = core.Exec(commandForm)
+	output, err := core.Exec(commandForm)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":    false,
@@ -49,7 +49,8 @@ func (c *AdbController) Index(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"success":    true,
-		"errMessage": "执行成功",
+		"success":      true,
+		"errorMessage": "",
+		"data":         output,
 	})
 }
