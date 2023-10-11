@@ -21,10 +21,17 @@ func (c *AdbController) Index(ctx *gin.Context) {
 		})
 		return
 	}
+	if commandForm.Op != "free" && commandForm.Ip == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"success":    false,
+			"errMessage": "客户ip不可为空",
+		})
+		return
+	}
 	if (commandForm.Op == "setProxy") && commandForm.ProxyAddr == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"success":    false,
-			"errMessage": "包名不可为空",
+			"errMessage": "代理地址不可为空",
 		})
 		return
 	}

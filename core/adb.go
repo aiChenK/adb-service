@@ -31,9 +31,10 @@ func Exec(commandForm request.CommandForm) (output string, err error) {
 		commandStr += "shell am force-stop " + commandForm.PackageName
 		break
 	default:
-		commandStr += commandForm.Cmd
+		commandStr = commandForm.Cmd
 	}
 
+	fmt.Println("执行命令：" + commandStr)
 	cmd := exec.Command("adb", strings.Split(commandStr, " ")...)
 	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {
