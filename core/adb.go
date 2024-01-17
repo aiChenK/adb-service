@@ -8,30 +8,31 @@ import (
 )
 
 func Exec(commandForm request.CommandForm) (output string, err error) {
-	//连接设备
+	//目标设备（用于拼接）
 	targetAddr := commandForm.Ip + ":" + commandForm.Port
-	err = deviceConnect(targetAddr, false)
-	if err != nil {
-		return
-	}
+	needConnectDevice := true
 
 	//处理命令
 	commandStr := "-s " + targetAddr + " "
 	switch commandForm.Op {
 	case "setProxy":
 		commandStr += "shell settings put global http_proxy " + commandForm.ProxyAddr
-		break
 	case "delProxy":
 		commandStr += "shell settings put global http_proxy :0"
-		break
 	case "clear":
 		commandStr += "shell pm clear " + commandForm.PackageName
-		break
 	case "stop":
 		commandStr += "shell am force-stop " + commandForm.PackageName
-		break
 	default:
+		needConnectDevice = false
 		commandStr = commandForm.Cmd
+	}
+
+	if needConnectDevice {
+		err = deviceConnect(targetAddr, false)
+		if err != nil {
+			return
+		}
 	}
 
 	fmt.Println("执行命令：" + commandStr)
