@@ -3,8 +3,9 @@ package controllers
 import (
 	"adb-service/core"
 	"adb-service/dto/request"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type AdbController struct {
@@ -56,8 +57,8 @@ func (c *AdbController) Index(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"success":      true,
-		"errorMessage": "",
-		"data":         output,
+		"success":    true,
+		"errMessage": "",
+		"data":       output,
 	})
 }

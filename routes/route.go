@@ -11,10 +11,16 @@ func InitRoute(engine *gin.Engine) {
 	// 添加跨域中间件
 	engine.Use(CORSMiddleware())
 
-	engine.Any(
+	engine.POST(
 		"/adb",
 		func(c *gin.Context) {
 			(&controllers.AdbController{}).Index(c)
+		},
+	)
+	engine.GET(
+		"/ip",
+		func(c *gin.Context) {
+			(&controllers.ToolController{}).Ip(c)
 		},
 	)
 }
