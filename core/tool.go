@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"net"
+	"runtime"
 	"strings"
 )
 
@@ -14,6 +15,15 @@ func GetLocalIp() (string, error) {
 		return "", err
 	}
 
+	netPrefix := ""
+	if runtime.GOOS == "darwin" {
+		netPrefix = "en"
+	} else if runtime.GOOS == "windows" {
+		netPrefix = "以太网"
+	} else {
+		return "仅支持win及mac获取ip", nil
+	}
+
 	// 遍历每个网络接口
 	for _, iface := range interfaces {
 		// 跳过环回接口和没有IP地址的接口
@@ -22,7 +32,7 @@ func GetLocalIp() (string, error) {
 		}
 
 		// 跳过非以太网接口
-		if !strings.HasPrefix(iface.Name, "以太网") {
+		if !strings.HasPrefix(iface.Name, netPrefix) {
 			continue
 		}
 
