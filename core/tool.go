@@ -3,10 +3,13 @@ package core
 import (
 	"fmt"
 	"net"
+	"os"
+	"os/exec"
 	"runtime"
 	"strings"
 )
 
+// 获取本机ip地址
 func GetLocalIp() (string, error) {
 	// 获取本机所有网络接口的列表
 	interfaces, err := net.Interfaces()
@@ -65,4 +68,43 @@ func GetLocalIp() (string, error) {
 		}
 	}
 	return "", nil
+}
+
+// CheckAdb 函数用于检查adb环境变量配置是否正确
+func CheckAdb() {
+	cmd := exec.Command("adb", "version")
+	err := cmd.Run()
+	if err != nil {
+		PrintErr("adb命令检查失败，请检查adb环境变量配置")
+		os.Exit(0)
+	}
+}
+
+// PrintErr 函数用于在终端打印红色错误信息
+// 参数msg为需要打印的错误信息字符串
+func PrintErr(msg string) {
+	fmt.Print("\033[31m")
+	fmt.Println(msg)
+	fmt.Print("\033[0m")
+}
+
+// OpenBrowser 函数用于打开浏览器，并跳转到指定url地址
+func OpenBrowser(url string) {
+	fmt.Println("执行打开地址：" + url)
+
+	var cmd *exec.Cmd
+
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("rundll32", "url.dll,FileProtocolHandler", url)
+	case "darwin":
+		cmd = exec.Command("open", url)
+	default: // Linux, FreeBSD, etc.
+		cmd = exec.Command("xdg-open", url)
+	}
+
+	err := cmd.Run()
+	if err != nil {
+		PrintErr("浏览器打开失败，请手动打开！")
+	}
 }
