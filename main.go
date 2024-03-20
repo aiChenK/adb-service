@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//go:embed static/dist
+//go:embed static
 var Static embed.FS
 
 func main() {
@@ -21,9 +21,9 @@ func main() {
 	routes.InitRoute(r)
 
 	// 静态资源(中间件避免路由冲突)
-	r.Use(routes.Serve("/", routes.EmbedFolder(Static, "static/dist")))
+	r.Use(routes.Serve("/", routes.EmbedFolder(Static, "static")))
 	r.NoRoute(func(c *gin.Context) {
-		data, err := Static.ReadFile("static/dist/index.html")
+		data, err := Static.ReadFile("static/index.html")
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return

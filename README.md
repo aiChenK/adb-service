@@ -15,7 +15,17 @@ go run .
 go build -o adb-service.exe
 ```
 
+### Build Local-Only
+```
+goreleaser release --snapshot --clean
+```
+
+
 ## 更新日志
+
+### 2024-03-20
+
+* goreleaser构建支持
 
 ### 2024-03-19
 
