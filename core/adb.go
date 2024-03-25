@@ -24,7 +24,8 @@ func Exec(commandForm request.CommandForm) (output string, err error) {
 	case "stop":
 		commandStr += "shell am force-stop " + commandForm.PackageName
 	case "getPackage":
-		commandStr += "shell dumpsys activity activities | grep mResumedActivity | awk '{print $4}' | awk -F'/' '{print $1}'"
+		// commandStr += "shell dumpsys activity activities | grep mResumedActivity | awk '{print $4}' | awk -F'/' '{print $1}'"
+		commandStr += "shell dumpsys activity activities | grep -E 'mResumedActivity|topResumedActivity' |  awk -F'/' '{print $1}' | awk '{print $NF}'"
 	default:
 		needConnectDevice = false
 		commandStr = commandForm.Cmd
