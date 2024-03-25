@@ -22,31 +22,41 @@ func (c *AdbController) Index(ctx *gin.Context) {
 		})
 		return
 	}
-	if commandForm.Op != "free" && commandForm.Ip == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success":    false,
-			"errMessage": "客户ip不可为空",
-		})
-		return
+
+	// 条件判断
+	switch commandForm.Op {
+	case "setProxy":
+		if commandForm.ProxyAddr == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"success":    false,
+				"errMessage": "代理地址不可为空",
+			})
+			return
+		}
+	case "clear", "stop":
+		if commandForm.PackageName == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"success":    false,
+				"errMessage": "包名不可为空",
+			})
+			return
+		}
+	default:
+		if commandForm.Op != "free" && commandForm.Ip == "" {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"success":    false,
+				"errMessage": "客户端ip不可为空",
+			})
+			return
+		}
 	}
-	if (commandForm.Op == "setProxy") && commandForm.ProxyAddr == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success":    false,
-			"errMessage": "代理地址不可为空",
-		})
-		return
-	}
-	if (commandForm.Op == "clear" || commandForm.Op == "stop") && commandForm.PackageName == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"success":    false,
-			"errMessage": "包名不可为空",
-		})
-		return
-	}
+
+	// 默认端口
 	if commandForm.Port == "" {
 		commandForm.Port = "5555"
 	}
 
+	// 执行命令
 	output, err := core.Exec(commandForm)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{

@@ -1,7 +1,7 @@
 FROM debian:latest
 
 COPY ./docker/platform-tools/ /app/platform-tools/
-COPY ./docker/adb-service /app/
+COPY ./dist/linux_linux_amd64_v1/adb-service /app/
 
 RUN chmod +x /app/*
 ENV PLATFORM_TOOLS_PATH=/app/platform-tools

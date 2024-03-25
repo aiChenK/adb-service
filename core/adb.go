@@ -23,6 +23,8 @@ func Exec(commandForm request.CommandForm) (output string, err error) {
 		commandStr += "shell pm clear " + commandForm.PackageName
 	case "stop":
 		commandStr += "shell am force-stop " + commandForm.PackageName
+	case "getPackage":
+		commandStr += "shell dumpsys activity activities | grep mResumedActivity | awk '{print $4}' | awk -F'/' '{print $1}'"
 	default:
 		needConnectDevice = false
 		commandStr = commandForm.Cmd
@@ -35,7 +37,7 @@ func Exec(commandForm request.CommandForm) (output string, err error) {
 		}
 	}
 
-	fmt.Println("执行命令：" + commandStr)
+	// fmt.Println("执行命令：" + commandStr)
 	cmd := exec.Command("adb", strings.Split(commandStr, " ")...)
 	outputBytes, err := cmd.CombinedOutput()
 	if err != nil {

@@ -23,6 +23,10 @@ goreleaser release --snapshot --clean
 
 ## 更新日志
 
+### 2024-03-25
+
+* 支持获取客户端当前运行包名
+
 ### 2024-03-20
 
 * goreleaser构建支持
